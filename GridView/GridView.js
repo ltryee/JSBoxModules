@@ -20,7 +20,6 @@ const DefaultOptions = {
 let maker = (identifier, options, dataList, didSelectCallback) => {
   var theOptions = Object.assign({}, DefaultOptions, options)
   let objID = identifier || 'matrix'
-  $console.info(`theOptions: ${Object.keys(theOptions)}, ${theOptions.columns}`)
 
   let dataSource = dataList.map((item, index) => {
     return {
