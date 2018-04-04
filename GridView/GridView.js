@@ -6,6 +6,17 @@ const DefaultOptions = {
   height: 40, // cell的高度
 }
 
+/**
+ * 生成网格view对象
+ * @param   {?String}     identifier        view的id
+ * @param   {?Dictionary} options           view的配置项
+ * @param   {?Number}     options.colunms   cell列数
+ * @param   {?Number}     options.height    cell高度
+ * @param   {?Number}     options.margin    cell间距
+ * @param   {!Array}      dataList          数据
+ * @param   {!Function}   didSelectCallback 点击事件回调
+ * @returns {Object}      网格view对象
+ */
 let maker = (identifier, options, dataList, didSelectCallback) => {
   var theOptions = Object.assign({}, DefaultOptions, options)
   let objID = identifier || 'matrix'
