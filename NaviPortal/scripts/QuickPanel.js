@@ -1,3 +1,5 @@
+'use strict'
+
 const Config = require('scripts/GlobalConfig.js')
 
 let view = {
