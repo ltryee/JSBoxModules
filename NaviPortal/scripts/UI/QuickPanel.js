@@ -1,6 +1,6 @@
 'use strict'
 
-const Config = require('scripts/GlobalConfig.js')
+const Config = require('scripts/Core/GlobalConfig.js')
 
 let view = {
   props: {

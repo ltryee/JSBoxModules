@@ -1,6 +1,6 @@
 'use strict'
 
-const Config = require('scripts/GlobalConfig.js').cache
+const Config = require('scripts/Core/GlobalConfig.js').cache
 const PathKey = Config.pathKey
 const LocationKey = Config.locationKey
 

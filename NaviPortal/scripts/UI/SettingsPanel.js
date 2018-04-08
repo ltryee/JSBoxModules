@@ -1,10 +1,30 @@
 'use strict'
 
-const Config = require('scripts/GlobalConfig.js')
-const PathCache = require('scripts/Cache.js')[Config.cache.pathKey]
-const LocationCache = require('scripts/Cache.js')[Config.cache.locationKey]
+const Config = require('scripts/Core/GlobalConfig.js')
+const PathCache = require('scripts/Core/Cache.js')[Config.cache.pathKey]
+const LocationCache = require('scripts/Core/Cache.js')[Config.cache.locationKey]
 
-$console.info(`locations: ${JSON.stringify(LocationCache)}`)
+const AddLocationView = () => {
+  let view = require('scripts/AddLocationPanel.js')
+  $console.info(view)
+
+  return new Promise((resolve, reject) => {
+    $location.fetch({
+      handler: (resp) => {
+        let lat = resp.lat
+        let lng = resp.lng
+
+        resolve({lat, lng})
+      }
+    })
+  })
+  .then((location) => {
+    view.views[0].props.location = location
+    $console.info(location)
+    $console.info(JSON.stringify(view))
+    return view
+  })
+}
 
 let makeLocations = () => {
   let list = LocationCache.keys().map((item) => {
@@ -25,7 +45,9 @@ let makeLocations = () => {
     layout: $layout.fill,
     events: {
       tapped: (sender) => {
-        // TODO: AddLocationPanel
+        AddLocationView().then((view) => {
+          $ui.push(view)
+        })
       }
     }
   })
