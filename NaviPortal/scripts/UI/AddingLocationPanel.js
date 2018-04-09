@@ -55,19 +55,12 @@ let footer = {
   events: {
     tapped: (sender) => {
       let record = $('AddingLocationPanel').info
-      $console.info('record in AddingLocationPanel')
-      $console.info($props(record))
-      $console.info(record)
-      $console.info($props($('AddingLocationPanel')))
-      // $console.info($('AddingLocationPanel').info)
-
       let newLocation = {
         lng: Number($('lng').text),
         lat: Number($('lat').text),
         name: $('name').text,
         type: $('coord').text,
       }
-
       let newRecord = Object.assign({}, record, newLocation)
 
       LocationCache.set(newRecord)
@@ -83,7 +76,12 @@ let getTextInbox = (identifier, kbType) => {
       id: identifier,
       type: kbType,
     },
-    layout: $layout.fill
+    layout: $layout.fill,
+    events: {
+      returned: (sender) => {
+        sender.blur()
+      }
+    }
   }
 }
 

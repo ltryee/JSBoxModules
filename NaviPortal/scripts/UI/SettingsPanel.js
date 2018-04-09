@@ -2,6 +2,7 @@
 
 const Config = require('scripts/Core/GlobalConfig.js')
 const LocationDataSource = require('scripts/Core/LocationDataSource.js')
+const PathDataSource = require('scripts/Core/PathDataSource.js')
 const Utils = require('scripts/Core/Utils.js')
 
 let getCurrentLocation = Utils.getCurrentLocation
@@ -24,7 +25,7 @@ let addingLocationView = (location) => {
 const AddingLocationButton = {
   type: 'label',
   props: {
-    text: '添加',
+    text: '添加新位置',
     textColor: $color('tint'),
     align: $align.center
   },
@@ -39,17 +40,49 @@ const AddingLocationButton = {
   }
 }
 
+let addingPathView = (path) => {
+  let view = require('scripts/UI/AddingPathPanel.js')
+
+  view.props.info = path || {}
+  if (path) {
+    view.views[0].props.data[0].rows[0].props.text = path.from.name
+    view.views[0].props.data[1].rows[0].props.text = path.to.name
+  }
+
+  return view
+}
+
+const AddingPathButton = {
+  type: 'label',
+  props: {
+    text: '添加新路线',
+    textColor: $color('tint'),
+    align: $align.center
+  },
+  layout: $layout.fill,
+  events: {
+    tapped: (sender) => {
+      let view = addingPathView(null)
+      $console.info(JSON.stringify(view))
+      $ui.push(view)
+    }
+  }
+}
+
 let locationData = LocationDataSource()
 locationData.push(AddingLocationButton)
 
+let pathData = PathDataSource()
+pathData.push(AddingPathButton)
+
 let dataSource = [
   {
-    title: '地点',
+    title: '位置',
     rows: locationData
   },
   {
     title: '路线',
-    // rows: ["1-0", "1-1", "1-2"]
+    rows: pathData
   }
 ]
 
@@ -81,9 +114,18 @@ let view = {
     layout: $layout.fill,
     events: {
       didSelect: (sender, indexPath, data) => {
-        let location = sender.object(indexPath).record
-        let view = addingLocationView(location)
-        $ui.push(view)
+        if (indexPath.section == 0) {
+          let location = sender.object(indexPath).record
+          let view = addingLocationView(location)
+          $ui.push(view)
+        }
+
+        if (indexPath.section == 1) {
+          let path = sender.object(indexPath).record
+          let view = addingPathView(path)
+          $ui.push(view)
+        }
+        
       }
     }
   }]
