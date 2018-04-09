@@ -9,10 +9,14 @@ let getCurrentLocation = Utils.getCurrentLocation
 let addingLocationView = (location) => {
   let view = require('scripts/UI/AddingLocationPanel.js')
 
-  view.views[0].props.data[0].rows[0].props.location = location
-  view.views[0].props.data[1].rows[0].props.text = '新的位置'
+  view.views[0].props.data[0].rows[0].props.location = {
+    lat: location.lat,
+    lng: location.lng,
+  }
+  view.views[0].props.data[1].rows[0].props.text = location.name
   view.views[0].props.data[2].rows[0].props.text = String(location.lng)
   view.views[0].props.data[3].rows[0].props.text = String(location.lat)
+  view.props.info = location
 
   return view
 }
@@ -45,7 +49,7 @@ let dataSource = [
   },
   {
     title: '路线',
-    rows: ["1-0", "1-1", "1-2"]
+    // rows: ["1-0", "1-1", "1-2"]
   }
 ]
 
@@ -55,7 +59,10 @@ let template = [
     props: {
       id: 'label',
     },
-    layout: $layout.fill
+    layout: (make, view) => {
+      make.left.right.equalTo(15)
+      make.height.equalTo(view.super)
+    }
   }
 ]
 
@@ -66,18 +73,19 @@ let view = {
   views: [{
     type: 'list',
     props: {
+      id: 'settingsList',
       rowHeight: 44,
       data: dataSource,
       template: template
     },
     layout: $layout.fill,
-    // events: {
-    //   didSelect: (sender, indexPath, data) => {
-    //     $console.info(sender)
-    //     $console.info(indexPath)
-    //     $console.info(data)
-    //   }
-    // }
+    events: {
+      didSelect: (sender, indexPath, data) => {
+        let location = sender.object(indexPath).record
+        let view = addingLocationView(location)
+        $ui.push(view)
+      }
+    }
   }]
 }
 

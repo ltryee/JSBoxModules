@@ -2,7 +2,7 @@
 
 const Config = require('scripts/Core/GlobalConfig.js')
 const Margin = Config.ui.margin
-const Utils = require('scripts/Core/Utils.js')
+const LocationCache = require('scripts/Core/Cache.js')[Config.cache.locationKey]
 
 let mapView = {
   type: 'map',
@@ -54,13 +54,24 @@ let footer = {
   },
   events: {
     tapped: (sender) => {
+      let record = $('AddingLocationPanel').info
+      $console.info('record in AddingLocationPanel')
+      $console.info($props(record))
+      $console.info(record)
+      $console.info($props($('AddingLocationPanel')))
+      // $console.info($('AddingLocationPanel').info)
+
       let newLocation = {
         lng: Number($('lng').text),
         lat: Number($('lat').text),
-        name: $('name').text
+        name: $('name').text,
+        type: $('coord').text,
       }
-      $console.info('newLocation')
-      $console.info(newLocation)
+
+      let newRecord = Object.assign({}, record, newLocation)
+
+      LocationCache.set(newRecord)
+      $ui.pop()
     }
   }
 }
@@ -94,7 +105,10 @@ let dataSource = [
   },
   {
     title: '坐标类型',
-    rows: [coordView, pickerView]
+    rows: [
+      coordView, 
+      // pickerView
+    ]
   }
 ]
 
@@ -123,16 +137,6 @@ let view = {
           return Config.ui.height
         }
       },
-      didSelect: (sender, indexPath) => {
-        // if (indexPath.section == 4 && indexPath.row == 0) {
-        //   $console.info('tapped')
-        //   $console.info($props(sender))
-        //   let newData = dataSource
-        //   newData[4].rows = [coordView, pickerView]
-        //   sender.data = newData
-        //   // sender.runtimeValue().invoke('reloadData')
-        // }
-      }
     }
   }],
 }

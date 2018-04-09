@@ -17,6 +17,10 @@ class CacheModule {
     $cache.set(this._id, value)
   }
 
+  _generateID(key) {
+    return $text.MD5(`${(new Date()).getTime()}${JSON.stringify(key)}`)
+  }
+
   keys() {
     let rawData = this._load()
     return Object.keys(rawData)
@@ -27,10 +31,12 @@ class CacheModule {
     return !!key ? rawData[key] : rawData
   }
 
-  set(key, value) {
+  set(value) {
     let rawData = this._load()
-    rawData[key] = value
-    this._store()
+    let _id = value._id || this._generateID(value)
+    value._id = _id
+    rawData[_id] = value
+    this._store(rawData)
   }
 
   remove(key) {
