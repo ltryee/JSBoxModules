@@ -2,6 +2,7 @@
 
 const Config = require('scripts/Core/GlobalConfig.js')
 const Margin = Config.ui.margin
+const Utils = require('scripts/Core/Utils.js')
 
 let mapView = {
   type: 'map',
@@ -12,6 +13,31 @@ let mapView = {
     make.left.right.top.equalTo(view.super).with.inset(Margin)
     make.height.equalTo(view.width)
   }
+}
+
+let pickerView = {
+  type: 'picker',
+  props: {
+    id: 'coord_type',
+    items: [['WGS84', 'GCJ02']],
+  },
+  layout: $layout.fill,
+  events: {
+    changed: (sender) => {
+      $('coord').text = sender.data
+    }
+  }
+}
+
+let coordView = {
+  type: 'label',
+  props: {
+    id: 'coord',
+    text: 'WGS84',
+    align: $align.center,
+
+  },
+  layout: $layout.fill
 }
 
 let footer = {
@@ -66,6 +92,10 @@ let dataSource = [
     title: '纬度',
     rows: [getTextInbox('lat', $kbType.decimal)]
   },
+  {
+    title: '坐标类型',
+    rows: [coordView, pickerView]
+  }
 ]
 
 let view = {
@@ -76,6 +106,7 @@ let view = {
   views: [{
     type: 'list',
     props: {
+      id: 'AddingLocationPanelList',
       data: dataSource,
       footer: footer,
     },
@@ -85,9 +116,22 @@ let view = {
         if (indexPath.section == 0) {
           return $device.info.screen.width
         }
+        else if (indexPath.section == 4 && indexPath.row == 1) {
+          return 80
+        }
         else {
           return Config.ui.height
         }
+      },
+      didSelect: (sender, indexPath) => {
+        // if (indexPath.section == 4 && indexPath.row == 0) {
+        //   $console.info('tapped')
+        //   $console.info($props(sender))
+        //   let newData = dataSource
+        //   newData[4].rows = [coordView, pickerView]
+        //   sender.data = newData
+        //   // sender.runtimeValue().invoke('reloadData')
+        // }
       }
     }
   }],
