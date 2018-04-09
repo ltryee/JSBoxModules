@@ -2,23 +2,18 @@
 
 const Config = require('scripts/Core/GlobalConfig.js')
 const LocationDataSource = require('scripts/Core/LocationDataSource.js')
+const Utils = require('scripts/Core/Utils.js')
 
-let getCurrentLocation = () => {
-  return new Promise((resolve, reject) => {
-    $location.fetch({
-      handler: (resp) => {
-        let lat = resp.lat
-        let lng = resp.lng
+let getCurrentLocation = Utils.getCurrentLocation
 
-        resolve({lat, lng})
-      }
-    })
-  })
-}
+let addingLocationView = (location) => {
+  let view = require('scripts/UI/AddingLocationPanel.js')
 
-let addingLocationView = (location, title) => {
-  let view = require('scripts/UI/AddLocationPanel.js')
-  view.views[0].props.location = location
+  view.views[0].props.data[0].rows[0].props.location = location
+  view.views[0].props.data[1].rows[0].props.text = '新的位置'
+  view.views[0].props.data[2].rows[0].props.text = String(location.lng)
+  view.views[0].props.data[3].rows[0].props.text = String(location.lat)
+
   return view
 }
 
@@ -33,7 +28,7 @@ const AddingLocationButton = {
   events: {
     tapped: (sender) => {
       getCurrentLocation().then((location) => {
-        let view = addingLocationView(location, '新的地点')
+        let view = addingLocationView(location)
         $ui.push(view)
       })
     }
