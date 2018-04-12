@@ -134,32 +134,30 @@ class MapViewDescriptor {
   }
 
   _onInit(handler) {
-    this._runScript(`
+    this._runScript(`{
       MapInstance.centerAndZoom(new BMap.Point(116.404, 39.915), 11)
       MapInstance.setCurrentCity("北京")
       $notify('onLogging', {'msg': 'Inner initialization done.'})
-    `, handler)
+    }`, handler)
   }
 
   assignLocation(initialPoint, runtimeHandler, jsHandler) {
-    this._runScript(`
+    this._runScript(`{
       let point = new BMap.Point(${initialPoint.lng}, ${initialPoint.lat})
       let marker = new BMap.Marker(point)
-      marker.addEventListener("click",attribute)
       MapInstance.addOverlay(marker)    //增加点
       marker.enableDragging()
-      marker.addEventListener("dragend",attribute)
-      marker.addEventListener("dragging",attribute)
-      function attribute() {
+      let attribute = () => {
         var p = marker.getPosition()  //获取marker的位置
-        // $notify('onLogging', {'msg': 'now location', 'lng': p.lng, 'lat': p.lat})
         $notify('onAssigningLocation', {'lng': p.lng, 'lat': p.lat})
       }
-    `, runtimeHandler)
+      marker.addEventListener("dragend",attribute)
+      marker.addEventListener("dragging",attribute)
+    }`, runtimeHandler)
   }
 
   assignRoute(beginLocation, endLocation, runtimeHandler) {
-    this._runScript(`
+    this._runScript(`{
       let beginPoint = new BMap.Point(${beginLocation.lng}, ${beginLocation.lat})
       let endPoint = new BMap.Point(${endLocation.lng}, ${endLocation.lat})
       let driving = new BMap.DrivingRoute(MapInstance, {
@@ -169,7 +167,7 @@ class MapViewDescriptor {
         }
       })
       driving.search(beginPoint, endPoint)
-    `, runtimeHandler)
+    }`, runtimeHandler)
   }
 
   setProps(props) {
@@ -202,18 +200,18 @@ class MapViewDescriptor {
           that._onInit((result, error) => {
             that._debugLog(result, error)
 
-            // that.assignLocation({
-            //   lng: 116.301592,
-            //   lat: 39.982896
-            // }, that._debugLog)
-
-            that.assignRoute({
-              lng: 116.301592, 
-              lat: 39.982896
-            }, {
-              lng: 117.830066, 
-              lat: 39.327633
+            that.assignLocation({
+              lng: 116.403,
+              lat: 39.916
             }, that._debugLog)
+
+            // that.assignRoute({
+            //   lng: 116.301592, 
+            //   lat: 39.982896
+            // }, {
+            //   lng: 117.830066, 
+            //   lat: 39.327633
+            // }, that._debugLog)
           })
         }
       }
